@@ -1,0 +1,31 @@
+#! /usr/bin/env ruby
+
+require "optparse"
+require "bindurator"
+
+options = {config: "/etc/bindurator.conf"}
+opts = OptionParser.new do |opts|
+  opts.banner = <<-EOF
+Usage: bindurator [-c <config file>] command
+
+  Commands:
+    master    generate named.conf for master
+    slave     generate named.conf for slave
+
+  Options:
+EOF
+
+  opts.on("-cCONFIG", "--config-file CONFIG", "Configuration file (default: #{options[:config]})") do |x|
+    options[:config] = x
+  end
+end
+
+opts.parse!
+command = ARGV[0]
+
+unless Bindurator::Commands.include? command
+  abort opts.help
+end
+
+Bindurator.load_config options[:config]
+Bindurator.send command
