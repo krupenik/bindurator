@@ -1,6 +1,7 @@
 module Bindurator
   class View
     def initialize name, data
+      raise "view must have a name" unless name.is_a?(String) && 0 < name.length
       raise "data should include clients, masters, slaves and zones lists" unless
         data.is_a?(Hash) && [:clients, :masters, :slaves, :zones].all? { |k| data.has_key?(k) && data[k].is_a?(Array) }
 
@@ -13,11 +14,14 @@ module Bindurator
 
     def slave
       ["view \"#{@name}\" {",
-        [clients, zones(:slave)].flatten.join("\n"),
+        [clients, zones(:slave)].join("\n"),
       "};\n"].join("\n")
     end
 
     def master
+      ["view \"#{@name}\" {",
+        [clients, servers.join("\n"), view_settings(:master), zones(:master)].join("\n"),
+      "};\n"].join("\n")
     end
 
     private
@@ -26,12 +30,25 @@ module Bindurator
       "match-clients { key #{@name}, !tsig_keys, #{@clients.join(", ")} };"
     end
 
+    def file zone
+      "file \"pri/#{zone}/#{@name}.zone\";"
+    end
+
     def masters
       "masters { #{@masters.reduce("") { |a, e| "%s key %s;" % [e, @name]} } };"
     end
 
-    def file zone
-      "file \"pri/#{zone}/#{@name}.zone\";"
+    def servers
+      @slaves.map { |slave|
+        "server #{slave} { keys #{@name}; };"
+      }
+    end
+
+    def view_settings role
+      case role
+      when :master
+        "allow-transfer { keys #{@name}; };\nnotify yes;"
+      end
     end
 
     def zones role
