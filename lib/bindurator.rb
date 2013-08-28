@@ -32,13 +32,5 @@ module Bindurator
       raise "config data should be a hash" unless data.is_a? Hash
       @config.merge!(data) and true
     end
-
-    def generate_views role=:slave
-
-    end
-
-    def generate_view role, data={}
-      View.new(data).send role
-    end
   end
 end
