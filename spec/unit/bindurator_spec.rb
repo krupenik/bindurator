@@ -1,7 +1,7 @@
 require 'bindurator'
 
 describe Bindurator do
-  describe "#load_string" do
+  describe ".load_string" do
     it "rejects non-hashes" do
       expect { Bindurator.send(:load_string, "") }.to raise_error
       expect { Bindurator.send(:load_string, "[]") }.to raise_error
@@ -12,7 +12,7 @@ describe Bindurator do
     end
   end
 
-  describe "#load_config" do
+  describe ".load_config" do
     let(:tmp_conf) { "spec/tmp/tmp.conf" }
 
     context "with valid file" do
