@@ -5,7 +5,7 @@ describe Bindurator::View do
   include_view_definition
 
   describe "#slave" do
-    it "should generate the view for a slave" do
+    it "generates the view for a slave" do
       expect(subject.slave).to eq(<<EOF
 view "test" {
 match-clients { key test, !tsig_keys, country_US, country_CA };
@@ -18,7 +18,7 @@ EOF
   end
 
   describe "#master" do
-    it "should generate the view for the master" do
+    it "generates the view for the master" do
       expect(subject.master).to eq(<<EOF
 view "test" {
 match-clients { key test, !tsig_keys, country_US, country_CA };

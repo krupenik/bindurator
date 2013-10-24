@@ -13,15 +13,11 @@ module Bindurator
     end
 
     def slave
-      ["view \"#{@name}\" {",
-        [clients, zones(:slave)].join("\n"),
-      "};\n"].join("\n")
+      ["view \"#{@name}\" {", clients, zones(:slave), "};\n"].join("\n")
     end
 
     def master
-      ["view \"#{@name}\" {",
-        [clients, servers.join("\n"), view_settings(:master), zones(:master)].join("\n"),
-      "};\n"].join("\n")
+      ["view \"#{@name}\" {", clients, servers, view_settings(:master), zones(:master), "};\n"].join("\n")
     end
 
     private
@@ -35,7 +31,7 @@ module Bindurator
     end
 
     def masters
-      "masters { #{@masters.reduce("") { |a, e| "%s key %s;" % [e, @name]} } };"
+      ["masters {", @masters.reduce("") { |a, e| "%s key %s;" % [e, @name]}, "};"].join(" ")
     end
 
     def servers
