@@ -1,5 +1,7 @@
 # Bindurator
 
+[![Code Climate](https://codeclimate.com/github/krupenik/bindurator.png)](https://codeclimate.com/github/krupenik/bindurator)
+
 ISC BINDv9 config generator
 
 ## Installation
