@@ -7,7 +7,7 @@ describe Bindurator::Zone do
   describe "#generate" do
     it "generates zone file content" do
       expect(subject.generate).to eq(<<EOF
-$TTL #{described_class::TTL}
+$TTL #{subject.ttl}
 @ SOA ns0 root (#{subject.version} 1d 10m 2w 10m)
 @ NS ns1
 @ NS ns2

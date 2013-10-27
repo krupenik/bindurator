@@ -2,27 +2,41 @@ module Bindurator
   class Zone
     TTL = 600
 
-    attr_accessor :version
+    def initialize config
+      raise 'config should include data' unless
+        config.is_a?(Hash) && config.has_key?(:data) && config[:data].is_a?(Hash)
 
-    def initialize version, data
-      raise 'zone should have a version' unless version.is_a?(Numeric) && version > 0
+      @config = config
+      @data = @config[:data]
+
       raise 'data should include name and mail servers and at least one A record' unless
-      data.is_a?(Hash) && [:ns, :mx, :a].all? { |k| data.has_key?(k) && !data[k].empty? }
+        [:ns, :mx, :a].all? { |k| @data.has_key?(k) && !@data[k].empty? }
 
-      @version = version
-      @data = data
+      @config[:version] = @config[:version].to_i
+      @config[:version] = Time.now.utc.strftime("%Y%m%d%H%M") if @config[:version] <= 0
+
+      @config[:ttl] = @config[:ttl].to_i
+      @config[:ttl] = TTL if @config[:ttl] <= 0
     end
 
     def generate
       [header, essentials, resources, nil].join("\n")
     end
 
+    def version
+      @config[:version]
+    end
+
+    def ttl
+      @config[:ttl]
+    end
+
     private
 
     def header
       [
-        "$TTL #{TTL}",
-        "@ SOA ns0 root (#{@version} 1d 10m 2w 10m)",
+        "$TTL #{ttl}",
+        "@ SOA ns0 root (#{version} 1d 10m 2w 10m)",
       ]
     end
 

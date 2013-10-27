@@ -2,23 +2,14 @@ require 'bindurator/zone'
 require 'spec_helper'
 
 describe Bindurator::Zone do
-  let(:valid_data) { {ns: 'ns1', mx: 'mail', a: ['ns1' => '10.0.0.1']}}
+  let(:valid_data) { {data: {ns: '.', mx: '.', a: {'' => ''}}} }
 
   describe '#new' do
-    it 'requires version and data' do
-      expect { described_class.new() }.to raise_error
-      expect { described_class.new(nil, nil) }.to raise_error
-    end
-
-    it 'requires valid version' do
-      expect { described_class.new(nil, valid_data) }.to raise_error
-      expect { described_class.new(0, valid_data) }.to raise_error
-    end
-
     it 'requires essentials: ns, mx, a' do
-      expect { described_class.new(1) }.to raise_error
-      expect { described_class.new(1, {}) }.to raise_error
-      expect { described_class.new(1, valid_data) }.not_to raise_error
+      expect { described_class.new() }.to raise_error
+      expect { described_class.new(nil) }.to raise_error
+      expect { described_class.new({}) }.to raise_error
+      expect { described_class.new(valid_data) }.not_to raise_error
     end
   end
 
@@ -28,7 +19,7 @@ describe Bindurator::Zone do
     describe '#header' do
       it 'generates zone header' do
         expect(subject.send :header).to match_array([
-          "$TTL #{described_class::TTL}",
+          "$TTL #{subject.ttl}",
           "@ SOA ns0 root (#{subject.version} 1d 10m 2w 10m)",
         ])
       end
