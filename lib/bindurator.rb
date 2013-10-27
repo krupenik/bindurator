@@ -1,5 +1,8 @@
+require 'active_support/core_ext/hash/keys'
 require 'yaml'
-require "bindurator/version"
+require 'bindurator/version'
+require 'bindurator/view'
+require 'bindurator/zone'
 
 module Bindurator
   Commands = %w(master slave).freeze
