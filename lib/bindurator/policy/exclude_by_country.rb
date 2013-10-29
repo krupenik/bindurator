@@ -8,8 +8,24 @@ module Bindurator
         @geoip = geoip
       end
 
-      def views
-        # TODO: add view separation by match-clients
+      def views views_data
+        extracted_views = {}
+
+        views_data.each do |name, clients_list|
+          clients_list.each do |clients|
+            if (
+              clients.is_a?(Hash) &&
+              clients.has_key?("countries") &&
+              clients["countries"].include?(@country) &&
+              clients["countries"].length > 1
+              )
+              clients["countries"] -= [@country]
+              extracted_views[@country] = [{"countries" => [@country]}]
+            end
+          end
+        end
+
+        views_data.merge(extracted_views)
       end
 
       def zones zone_names

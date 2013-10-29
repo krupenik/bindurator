@@ -1,5 +1,7 @@
 require 'active_support/core_ext/hash/keys'
 require 'yaml'
+
+require 'bindurator/policy/exclude_by_country'
 require 'bindurator/version'
 require 'bindurator/view'
 require 'bindurator/zone'
