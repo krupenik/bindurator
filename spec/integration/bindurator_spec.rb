@@ -35,8 +35,8 @@ server 192.168.0.3 { keys internal; };
 allow-transfer { keys internal; };
 notify yes;
 zone "zone.ua" { type master; file "pri/zone.ua/internal.zone"; };
-zone "zone.uk" { type master; file "pri/zone.uk/internal.zone"; };
-zone "zone.us" { type master; file "pri/zone.us/internal.zone"; };
+zone "zone.uk" { type master; file "pri/zone.ua/internal.zone"; };
+zone "zone.us" { type master; file "pri/zone.ua/internal.zone"; };
 };
 
 view "external" {
@@ -46,8 +46,8 @@ server 192.168.0.3 { keys external; };
 allow-transfer { keys external; };
 notify yes;
 zone "zone.ua" { type master; file "pri/zone.ua/external.zone"; };
-zone "zone.uk" { type master; file "pri/zone.uk/external.zone"; };
-zone "zone.us" { type master; file "pri/zone.us/external.zone"; };
+zone "zone.uk" { type master; file "pri/zone.ua/external.zone"; };
+zone "zone.us" { type master; file "pri/zone.ua/external.zone"; };
 };
 EOF
       )

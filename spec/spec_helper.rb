@@ -1,14 +1,9 @@
-def include_view_definition
-  subject { Bindurator::View.new("test",
-    clients: %w(country_US country_CA),
-    masters: %w(10.0.0.1),
-    slaves: %w(10.0.0.2 10.0.0.3),
-    zones: %w(zone.us zone.ca))
-  }
-end
-
 def include_zone_definition
-  subject { Bindurator::Zone.new("zone.ua", {
+  require 'bindurator/zone'
+
+  zone = Bindurator::Zone.new("zone.ua", {
+    master: '10.0.0.1',
+    slaves: %w(10.0.0.2 10.0.0.3),
     aliases: %w(zone.uk zone.us),
     data: {
       ns: %w(ns1 ns2),
@@ -28,8 +23,25 @@ def include_zone_definition
       srv: {
         '_xmpp-client._tcp' => '5222 0 5 .'
       },
-    }
-  })}
+    },
+  })
+
+  @zone = zone
+
+  subject(:zone) { zone }
+end
+
+def include_view_definition
+  include_zone_definition
+
+  require 'bindurator/view'
+
+  view = Bindurator::View.new("test", {
+    clients: [{"countries" => %w(ua uk us)}],
+    zones: [@zone],
+  })
+
+  subject(:view) { view }
 end
 
 def include_full_config
@@ -42,7 +54,7 @@ def include_full_config
     },
     zones: {
       'zone.ua' => {
-        masters: ['10.0.0.1'],
+        master: '10.0.0.1',
         slaves: ['192.168.0.2', '192.168.0.3'],
         aliases: ['zone.uk', 'zone.us'],
         data: {
@@ -53,7 +65,7 @@ def include_full_config
             'ns2' => '192.168.0.3',
             'mx1' => '192.168.0.2',
             '@, *' => ['192.168.0.2', '192.168.0.3'],
-          }
+          },
         },
       },
     },
@@ -63,4 +75,3 @@ def include_full_config
 
   subject { Bindurator }
 end
-

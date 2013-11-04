@@ -1,5 +1,3 @@
-require 'active_support/core_ext/hash/keys'
-require 'active_support/inflector'
 require 'yaml'
 
 require 'bindurator/core_ext/hash/keys'
@@ -13,6 +11,8 @@ module Bindurator
 
   @config = {}
   @policies = []
+  @views = []
+  @zones = []
 
   class << self
     attr_reader :config, :geoip
@@ -53,12 +53,17 @@ module Bindurator
 
     def prepare_config
       symbolize_config
-      collect_policies
       init_geoip
     end
 
     def init_geoip
-      @geoip = GeoIP.new(@config[:geoip_dat]) if @config[:geoip_dat] && defined?(GeoIP)
+      if @config[:geoip_dat]
+        begin
+          require 'geoip'
+          @geoip = GeoIP.new(@config[:geoip_dat])
+        rescue LoadError
+        end
+      end
     end
 
     def symbolize_config
@@ -73,35 +78,20 @@ module Bindurator
       end
     end
 
-    def collect_policies
-      @policies = @config[:zones].reduce([]) { |a, (name, data)|
-        (a + (data[:policies] || []))
-      }.uniq.map { |policy_name|
-        "Bindurator::Policy::#{policy_name.classify}".constantize rescue nil
-      }.compact
+    def collect_zones
+      @zones = @config[:zones].map { |name, config| Bindurator::Zone.new(name, config) }
+    end
+
+    def collect_views
+      collect_zones
+
+      @views = @config[:views].map { |name, clients| Bindurator::View.new(name, {clients: clients, zones: @zones}) }
     end
 
     def generate_views role
-      @config[:views].map { |name, clients|
-        data = {
-          clients: expand_countries(clients),
-          zones: @config[:zones].reduce([]) { |a, (name, data)| a + [name] + (data[:aliases] || []) }.uniq,
-          masters: @config[:zones].reduce([]) { |a, (name, data)| a + (data[:masters] || []) }.uniq,
-          slaves: @config[:zones].reduce([]) { |a, (name, data)| a + (data[:slaves] || []) }.uniq,
-        }
+      collect_views
 
-        Bindurator::View.new(name, data).send(role)
-      }.join("\n")
-    end
-
-    def expand_countries clients
-      clients.map { |i|
-        if i.is_a?(Hash) && i.has_key?("countries")
-          i["countries"].map { |c| "country_#{c.upcase}" }
-        else
-          i
-        end
-      }
+      @views.map { |v| v.send(role) }.join("\n")
     end
   end
 end

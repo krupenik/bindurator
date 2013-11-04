@@ -26,16 +26,16 @@ describe Bindurator::Zone do
 
     describe '#header' do
       it 'generates zone header' do
-        expect(subject.send :header).to match_array([
-          "$TTL #{subject.ttl}",
-          "@ SOA ns0 root (#{subject.version} 1d 10m 2w 10m)",
+        expect(zone.send :header).to match_array([
+          "$TTL #{zone.ttl}",
+          "@ SOA ns0 root (#{zone.version} 1d 10m 2w 10m)",
         ])
       end
     end
 
     describe '#essentials' do
       it 'generates zone essentials' do
-        expect(subject.send :essentials).to match_array([
+        expect(zone.send :essentials).to match_array([
           '@ NS ns1',
           '@ NS ns2',
           '@ MX 1 mail',
@@ -45,7 +45,7 @@ describe Bindurator::Zone do
 
     describe '#resources' do
       it 'generates zone resources' do
-        expect(subject.send :resources).to match_array([
+        expect(zone.send :resources).to match_array([
           '@ A 10.0.0.1',
           '@ A 10.0.0.2',
           '@ A 10.0.0.3',

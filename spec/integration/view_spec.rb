@@ -8,9 +8,10 @@ describe Bindurator::View do
     it "generates the view for a slave" do
       expect(subject.slave).to eq(<<EOF
 view "test" {
-match-clients { key test; !tsig_keys; country_US; country_CA; };
+match-clients { key test; !tsig_keys; country_UA; country_UK; country_US; };
+zone "zone.ua" { type slave; masters { 10.0.0.1 key test; }; };
+zone "zone.uk" { type slave; masters { 10.0.0.1 key test; }; };
 zone "zone.us" { type slave; masters { 10.0.0.1 key test; }; };
-zone "zone.ca" { type slave; masters { 10.0.0.1 key test; }; };
 };
 EOF
       )
@@ -21,13 +22,14 @@ EOF
     it "generates the view for the master" do
       expect(subject.master).to eq(<<EOF
 view "test" {
-match-clients { key test; !tsig_keys; country_US; country_CA; };
+match-clients { key test; !tsig_keys; country_UA; country_UK; country_US; };
 server 10.0.0.2 { keys test; };
 server 10.0.0.3 { keys test; };
 allow-transfer { keys test; };
 notify yes;
-zone "zone.us" { type master; file "pri/zone.us/test.zone"; };
-zone "zone.ca" { type master; file "pri/zone.ca/test.zone"; };
+zone "zone.ua" { type master; file "pri/zone.ua/test.zone"; };
+zone "zone.uk" { type master; file "pri/zone.ua/test.zone"; };
+zone "zone.us" { type master; file "pri/zone.ua/test.zone"; };
 };
 EOF
       )
