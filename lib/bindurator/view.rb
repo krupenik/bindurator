@@ -23,7 +23,7 @@ module Bindurator
     private
 
     def clients
-      "match-clients { key #{@name}, !tsig_keys, #{@clients.join(", ")} };"
+      "match-clients { key #{@name}; !tsig_keys; #{@clients.join("; ")}; };"
     end
 
     def file zone

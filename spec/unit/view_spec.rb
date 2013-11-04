@@ -29,7 +29,7 @@ describe Bindurator::View do
 
     describe "#clients" do
       it "generates match-clients block" do
-        expect(subject.send :clients).to eq("match-clients { key test, !tsig_keys, country_US, country_CA };")
+        expect(subject.send :clients).to eq("match-clients { key test; !tsig_keys; country_US; country_CA; };")
       end
     end
 
