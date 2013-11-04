@@ -8,7 +8,8 @@ def include_view_definition
 end
 
 def include_zone_definition
-  subject { Bindurator::Zone.new({
+  subject { Bindurator::Zone.new("zone.ua", {
+    aliases: %w(zone.uk zone.us),
     data: {
       ns: %w(ns1 ns2),
       mx: 'mail',
@@ -30,3 +31,36 @@ def include_zone_definition
     }
   })}
 end
+
+def include_full_config
+  Bindurator.instance_variable_set(:@config, {
+    views: {
+      'internal' => ['127.0.0.0/8', '10.0.0.0/24'],
+      'external' => [{
+        'countries' => ['ua', 'uk', 'us', 'tt'],
+      }],
+    },
+    zones: {
+      'zone.ua' => {
+        masters: ['10.0.0.1'],
+        slaves: ['192.168.0.2', '192.168.0.3'],
+        aliases: ['zone.uk', 'zone.us'],
+        data: {
+          ns: ['ns1', 'ns2'],
+          mx: ['mx1'],
+          a: {
+            'ns1' => '192.168.0.2',
+            'ns2' => '192.168.0.3',
+            'mx1' => '192.168.0.2',
+            '@, *' => ['192.168.0.2', '192.168.0.3'],
+          }
+        },
+      },
+    },
+  })
+
+  Bindurator.send :prepare_config
+
+  subject { Bindurator }
+end
+

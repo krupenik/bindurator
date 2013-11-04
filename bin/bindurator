@@ -21,11 +21,11 @@ EOF
 end
 
 opts.parse!
-command = ARGV[0]
+command = ARGV.shift
 
 unless Bindurator::Commands.include? command
   abort opts.help
 end
 
 Bindurator.load_config options[:config]
-Bindurator.send command
+print Bindurator.send(command, ARGV)
