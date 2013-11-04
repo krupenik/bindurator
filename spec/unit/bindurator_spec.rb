@@ -1,40 +1,34 @@
 require 'bindurator'
+require 'tempfile'
 
 describe Bindurator do
   describe ".load_string" do
     it "rejects non-hashes" do
-      expect { Bindurator.send(:load_string, "") }.to raise_error
-      expect { Bindurator.send(:load_string, "[]") }.to raise_error
+      expect { described_class.send(:load_string, "") }.to raise_error
+      expect { described_class.send(:load_string, "a") }.to raise_error
+      expect { described_class.send(:load_string, "[]") }.to raise_error
     end
 
     it "accepts hashes" do
-      expect(Bindurator.send(:load_string, "{}")).to be_true
+      expect(described_class.send(:load_string, "{}")).to be_true
     end
   end
 
   describe ".load_config" do
-    let(:tmp_conf) { "spec/tmp/tmp.conf" }
+    let(:tmp_conf) { Tempfile.new(described_class.to_s) }
 
     context "with valid file" do
-      before { File.open(tmp_conf, 'w') { |f| f.write "{}" } }
-      after { File.unlink(tmp_conf) }
-
-      it "reads config if config directory exists" do
-        expect(Bindurator.load_config(File.dirname(tmp_conf))).to be_true
-      end
+      before { tmp_conf.write("{}"); tmp_conf.close }
+      after { tmp_conf.unlink }
 
       it "reads config if config file exists" do
-        expect(Bindurator.load_config(tmp_conf)).to be_true
+        expect(described_class.load_config(tmp_conf.path)).to be_true
       end
     end
 
     context "without file" do
-      it "raises meaningful error when config dir is empty" do
-        expect { Bindurator.load_config(File.dirname(tmp_conf)) }.to raise_error
-      end
-
       it "raises meaningful error if config file does not exist" do
-        expect { Bindurator.load_config(tmp_conf) }.to raise_error
+        expect { described_class.load_config(tmp_conf.path) }.to raise_error
       end
     end
   end
