@@ -2,36 +2,41 @@ module Bindurator
   class Zone
     TTL = 600
 
-    def initialize config
-      raise 'config should include data' unless
+    attr_reader :name, :ttl, :version
+
+    def initialize name, config
+      raise 'zone should have a valid name' unless name =~ /\A[\w\-\.]+\z/
+
+      @name = name
+
+      raise 'zone config should include data' unless
         config.is_a?(Hash) && config.has_key?(:data) && config[:data].is_a?(Hash)
 
       @config = config
       @data = @config[:data]
 
-      raise 'data should include name and mail servers and at least one A record' unless
+      raise 'zone data should include name and mail servers and at least one A record' unless
         [:ns, :mx, :a].all? { |k| @data.has_key?(k) && !@data[k].empty? }
 
-      @config[:version] = @config[:version].to_i
-      @config[:version] = Time.now.utc.strftime("%Y%m%d%H%M") if @config[:version] <= 0
-
-      @config[:ttl] = @config[:ttl].to_i
-      @config[:ttl] = TTL if @config[:ttl] <= 0
+      sanitize_ttl
+      sanitize_version
     end
 
     def generate
       [header, essentials, resources, nil].join("\n")
     end
 
-    def version
-      @config[:version]
-    end
-
-    def ttl
-      @config[:ttl]
-    end
-
     private
+
+    def sanitize_ttl
+      @ttl = @config[:ttl].to_i
+      @ttl = TTL if @ttl <= 0
+    end
+
+    def sanitize_version
+      @version = @config[:version].to_i
+      @version = Time.now.utc.strftime("%Y%m%d%H%M") if @version <= 0
+    end
 
     def header
       [

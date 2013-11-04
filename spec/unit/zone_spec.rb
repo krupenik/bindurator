@@ -2,14 +2,22 @@ require 'bindurator/zone'
 require 'spec_helper'
 
 describe Bindurator::Zone do
+  let(:valid_name) { 'a' }
   let(:valid_data) { {data: {ns: '.', mx: '.', a: {'' => ''}}} }
 
   describe '#new' do
-    it 'requires essentials: ns, mx, a' do
+    it 'requires a name' do
       expect { described_class.new() }.to raise_error
-      expect { described_class.new(nil) }.to raise_error
-      expect { described_class.new({}) }.to raise_error
-      expect { described_class.new(valid_data) }.not_to raise_error
+      expect { described_class.new(nil, valid_data) }.to raise_error
+      expect { described_class.new('', valid_data) }.to raise_error
+      expect { described_class.new(valid_name, valid_data) }.not_to raise_error
+    end
+
+    it 'requires essentials: ns, mx, a' do
+      expect { described_class.new(valid_name) }.to raise_error
+      expect { described_class.new(valid_name, nil) }.to raise_error
+      expect { described_class.new(valid_name, {}) }.to raise_error
+      expect { described_class.new(valid_name, valid_data) }.not_to raise_error
     end
   end
 
