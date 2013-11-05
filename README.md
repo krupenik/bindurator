@@ -1,6 +1,7 @@
 # Bindurator
 
 [![Code Climate](https://codeclimate.com/github/krupenik/bindurator.png)](https://codeclimate.com/github/krupenik/bindurator)
+[![Build Status](https://travis-ci.org/krupenik/bindurator.png?branch=master)](https://travis-ci.org/krupenik/bindurator)
 
 ISC BINDv9 config generator
 
