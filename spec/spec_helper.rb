@@ -1,7 +1,7 @@
 def include_zone_definition
-  require 'bindurator/zone'
+  require 'unbind/zone'
 
-  zone = Bindurator::Zone.new("zone.ua", {
+  zone = Unbind::Zone.new("zone.ua", {
     master: '10.0.0.1',
     slaves: %w(10.0.0.2 10.0.0.3),
     aliases: %w(zone.uk zone.us),
@@ -34,9 +34,9 @@ end
 def include_view_definition
   include_zone_definition
 
-  require 'bindurator/view'
+  require 'unbind/view'
 
-  view = Bindurator::View.new("test", {
+  view = Unbind::View.new("test", {
     clients: [{"countries" => %w(ua uk us)}],
     zones: [@zone],
   })
@@ -45,7 +45,7 @@ def include_view_definition
 end
 
 def include_full_config
-  Bindurator.instance_variable_set(:@config, {
+  Unbind.instance_variable_set(:@config, {
     views: {
       'internal' => ['127.0.0.0/8', '10.0.0.0/24'],
       'external' => [{
@@ -71,7 +71,7 @@ def include_full_config
     },
   })
 
-  Bindurator.send :prepare_config
+  Unbind.send :prepare_config
 
-  subject { Bindurator }
+  subject { Unbind }
 end

@@ -1,10 +1,10 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'bindurator/version'
+require 'unbind/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "bindurator"
-  spec.version       = Bindurator::VERSION
+  spec.name          = "unbind"
+  spec.version       = Unbind::VERSION
   spec.authors       = ["Dennis Krupenik"]
   spec.email         = ["dennis@krupenik.com"]
   spec.description   = %q{ISC BINDv9 config generator}

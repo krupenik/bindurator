@@ -1,23 +1,23 @@
 require 'yaml'
 
-require 'bindurator/core_ext/hash/keys'
+require 'unbind/core_ext/hash/keys'
+require 'unbind/core_ext/string/inflections'
 
-require 'bindurator/version'
-require 'bindurator/view'
-require 'bindurator/zone'
+require 'unbind/version'
+require 'unbind/view'
+require 'unbind/zone'
 
-module Bindurator
+module Unbind
   Commands = %w(master slave zone).freeze
 
   @config = {}
-  @policies = []
-  @views = []
-  @zones = []
 
   class << self
     attr_reader :config, :geoip
 
     def load_config config
+      clear_config
+
       files = File.directory?(config) ? Dir["#{config}/**/*.conf"] : Dir[config]
       raise "No files could be found (search path: #{config})" if files.empty?
       files.each { |f| raise "File '#{f}' could not be loaded" unless load_file(f) }
@@ -28,18 +28,18 @@ module Bindurator
     end
 
     def master(*)
-      generate_views :master
+      views.map { |v| v.master }.join("\n")
     end
 
     def slave(*)
-      generate_views :slave
+      views.map { |v| v.slave }.join("\n")
     end
 
-    def zone zone_name
-      Bindurator::Zone.new(@config[:zones][zone_name[0]]).generate
+    def zone zone_names
+      zone_names.map { |z| Unbind::Zone.new(z, @config[:zones][z]).generate }.join("\n")
     end
 
-    private
+    # private
 
     def load_file f
       load_string(File.read(File.expand_path(f)))
@@ -49,6 +49,10 @@ module Bindurator
       data = YAML.load(s)
       raise "config data should be a hash" unless data.is_a? Hash
       @config.merge!(data) and true
+    end
+
+    def clear_config
+      @config = {}
     end
 
     def prepare_config
@@ -78,20 +82,18 @@ module Bindurator
       end
     end
 
-    def collect_zones
-      @zones = @config[:zones].map { |name, config| Bindurator::Zone.new(name, config) }
+    def policies
+      @policies ||= @config[:zones].reduce([]) { |a, (name, config)| a + (config[:policies] || []) }.map { |policy_name|
+        Unbind::Policy.const_get(policy_name.camelize)
+      }
     end
 
-    def collect_views
-      collect_zones
-
-      @views = @config[:views].map { |name, clients| Bindurator::View.new(name, {clients: clients, zones: @zones}) }
+    def zones
+      @zones ||= @config[:zones].map { |name, config| Unbind::Zone.new(name, config) }
     end
 
-    def generate_views role
-      collect_views
-
-      @views.map { |v| v.send(role) }.join("\n")
+    def views
+      @views ||= @config[:views].map { |name, clients| Unbind::View.new(name, {clients: clients, zones: zones}) }
     end
   end
 end

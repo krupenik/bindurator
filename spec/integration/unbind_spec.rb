@@ -1,7 +1,7 @@
-require 'bindurator'
+require 'unbind'
 require 'spec_helper'
 
-describe Bindurator do
+describe Unbind do
   include_full_config
 
   describe '.slave' do

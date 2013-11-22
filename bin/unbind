@@ -1,0 +1,33 @@
+#! /usr/bin/env ruby
+
+require "optparse"
+require "unbind"
+
+options = {config: "/etc/unbind.conf"}
+opts = OptionParser.new do |opts|
+  opts.banner = <<-EOF
+Usage: unbind [-c <config file>] command
+
+  Commands:
+    master                      generate named.conf for master
+    slave                       generate named.conf for slave
+    zone zone_name [view_name]  generate zone file for view
+
+  Options:
+    -c                          config file to use
+EOF
+
+  opts.on("-cCONFIG", "--config-file CONFIG", "Configuration file (default: #{options[:config]})") do |x|
+    options[:config] = x
+  end
+end
+
+opts.parse!
+command = ARGV.shift
+
+unless Unbind::Commands.include? command
+  abort opts.help
+end
+
+Unbind.load_config options[:config]
+print Unbind.send(command, ARGV)

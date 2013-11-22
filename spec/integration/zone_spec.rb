@@ -1,7 +1,7 @@
-require 'bindurator/zone'
+require 'unbind/zone'
 require 'spec_helper'
 
-describe Bindurator::Zone do
+describe Unbind::Zone do
   include_zone_definition
 
   describe "#generate" do

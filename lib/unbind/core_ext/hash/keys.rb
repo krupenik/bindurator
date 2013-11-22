@@ -1,3 +1,5 @@
+# grabbed from activesupport-4.0.1
+
 class Hash
   # Return a new hash with all keys converted using the block operation.
   #

@@ -1,22 +1,22 @@
-# Bindurator
+# UNBIND
 
-[![Code Climate](https://codeclimate.com/github/krupenik/bindurator.png)](https://codeclimate.com/github/krupenik/bindurator)
-[![Build Status](https://travis-ci.org/krupenik/bindurator.png?branch=master)](https://travis-ci.org/krupenik/bindurator)
+[![Code Climate](https://codeclimate.com/github/krupenik/unbind.png)](https://codeclimate.com/github/krupenik/unbind)
+[![Build Status](https://travis-ci.org/krupenik/unbind.png?branch=master)](https://travis-ci.org/krupenik/unbind)
 
 ISC BINDv9 config generator
 
 ## Installation
 
-    gem install bindurator
+    gem install unbind
 
 ## Usage
 
-    $ bindurator -c named_conf.yml > named.conf
+    $ unbind [-c <config file>] command
 
-## Contributing
+      Commands:
+        master                      generate named.conf for master
+        slave                       generate named.conf for slave
+        zone zone_name [view_name]  generate zone file for view
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+      Options:
+        -c                          config file to use

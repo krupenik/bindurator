@@ -1,7 +1,7 @@
-require 'bindurator/view'
+require 'unbind/view'
 require 'spec_helper'
 
-describe Bindurator::View do
+describe Unbind::View do
   include_view_definition
 
   describe "#slave" do

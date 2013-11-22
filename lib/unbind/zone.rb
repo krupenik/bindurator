@@ -1,11 +1,11 @@
-module Bindurator
+module Unbind
   class Zone
     TTL = 600
 
     attr_reader :aliases, :master, :name, :slaves, :ttl, :version
 
     def initialize name, config
-      raise 'zone should have a valid name' unless name =~ /\A[\w\-\.]+\z/
+      raise "zone should have a valid name (given: #{name})" unless name =~ /\A[\w\-\.]+\z/
 
       @name = name
 

@@ -1,7 +1,7 @@
-require 'bindurator/view'
+require 'unbind/view'
 require 'spec_helper'
 
-describe Bindurator::View do
+describe Unbind::View do
   describe ".expand_countries" do
     it "expands countries list" do
       expect(described_class.expand_countries([{"countries" => %w(ua uk us)}])).to match_array([

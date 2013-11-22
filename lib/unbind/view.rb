@@ -1,4 +1,4 @@
-module Bindurator
+module Unbind
   class View
     def self.expand_countries clients
       clients.flat_map { |i|
